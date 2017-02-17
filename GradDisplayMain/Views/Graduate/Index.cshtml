@@ -1,0 +1,75 @@
+@{
+    ViewData["Title"] = "Main";
+}
+
+<div class="row">
+    <div id="graduate-dequeue" class="col-md-5">
+        <h2>Teleprompt</h2>
+        <div id="telepromptResult">
+        </div>
+    </div>
+
+    <div id="graduate-queue" class="col-md-7">
+        <h2>Queue</h2>
+        <div id="queueResult">
+
+        </div>
+    </div>
+</div>
+
+<div id="graduate-list">
+
+    <div class="row">
+        <div class="col-md-8">
+            <ul class="nav navbar-nav navbar-left">
+                @using (Html.BeginForm("Create", "Queue", FormMethod.Get))
+            {
+                    <li>@Html.TextBox("searchString", null, new { @id = "searchString", @autofocus = "autofocus" })</li>
+
+                    <li><input type="submit" name="submitToQueue" id="submitToQueue" /></li>
+                }
+
+            </ul>
+        </div>
+        <div class="col-md-4 create-reset">
+
+            <h2>List</h2>
+            <p>
+                <a asp-action="Create">Create New</a> | <a asp-action="ResetStatus">Reset Status</a>
+            </p>
+
+
+
+        </div>
+    </div>
+    <div class="row" style="margin-top:5px;">
+        <div class="col-md-12">
+            @if (ViewBag.isShowGraduates == true)
+            {
+                @Html.CheckBox("setShowGraduates", true, new { @id = "setShowGraduates" });
+            }
+            else
+            {
+
+                @Html.CheckBox("setShowGraduates", false, new { @id = "setShowGraduates" });
+            }
+            <label for="setShowGraduates">Show graduates</label>
+            |
+            <a asp-action="Preload" asp-controller="Queue">Preload queue</a>
+            |
+            <a asp-action="Clean" asp-controller="Queue">Wipe/clean queue and teleprompt tables</a>
+        </div>
+    </div>
+
+    @if (ViewBag.isShowGraduates == true)
+    {
+        <div class="row" style="margin-top:10px;">
+            <div id="searchResult" class="col-md-12">
+
+            </div>
+        </div>
+    }
+
+</div>
+
+<div id="clamp"></div>

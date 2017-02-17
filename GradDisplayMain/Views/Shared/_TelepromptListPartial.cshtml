@@ -1,0 +1,115 @@
+﻿@model GradDisplayMain.Models.TelepromptViewModels.TelepromptViewModel
+@if (Model != null)
+{
+    <a asp-action="Create" asp-controller="Teleprompt" class="showToScreen">
+
+        <table class="table">
+            <tr>
+                <td style="white-space:nowrap">
+                    <div class="row">
+                        <div class="col-xs-12" style="position:relative; margin:0 15px 0 0;padding:0;">
+                            @{ string filePath = ViewBag.wwwroot + "/resources/images/" + Model.GraduateId + ".jpg"; }
+
+                            @if (System.IO.File.Exists(filePath))
+                            {
+                                <img style="width:100%" src="/resources/images/@(@Model.GraduateId).jpg" />
+                            }
+                            else
+                            {
+                                <img style="width:100%" src="/resources/default/default.jpg" />
+                            }
+
+                            <div class="details" style="width:100%;display:block;float:left;font-size:10px;position:absolute;bottom:0;background: rgba(0, 0, 0,0.8);">
+                                <table style="width:100%;display:block;padding:10px;">
+                                    <tr>
+                                        <td valign="top" style="width:10%">
+                                            <span class="gray" style="font-size:10px;color:#aaa">@Html.DisplayNameFor(model => model.GraduateId)</span>
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => Model.GraduateId)
+                                        </td>
+                                        <td rowspan="4" width="10%">
+
+                                            @{ string fileSoundPath = ViewBag.wwwroot + "/resources/voices/" + ViewBag.voicePerson + "/" + ViewBag.voiceExtra + "/" + Model.GraduateId + ".wav"; }
+
+
+                                            @if (!String.IsNullOrEmpty(ViewBag.voicePerson) && !String.IsNullOrEmpty(ViewBag.voiceExtra))
+                                            {
+                                                if (!System.IO.File.Exists(fileSoundPath))
+                                                {
+                                                    <img style="width:100%" src="/resources/default/no-sound-white.png" />
+                                                }
+                                            }
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">
+                                            <span class="gray" style="font-size:10px;color:#aaa">Name</span>
+                                        </td>
+                                        <td>
+
+                                            @if (!ViewBag.isFullname)
+                                            {
+                                                <text>@Html.DisplayFor(modelItem => Model.LastName), @Html.DisplayFor(modelItem => Model.FirstName) @Html.DisplayFor(modelItem => Model.MiddleName)</text>
+                                            }
+                                            else
+                                            {
+
+                                                <text>@Html.DisplayFor(modelItem => Model.Fullname)</text>
+                                                <text> | </text>
+                                                <text>@Html.DisplayFor(modelItem => Model.ArabicFullname)</text>
+                                            }
+
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td valign="top">
+                                            <span class="gray" style="font-size:10px;color:#aaa;padding-right:5px">Academic</span>
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => Model.School)<br />
+                                            @Html.DisplayFor(modelItem => Model.Major)
+                                            @Html.DisplayFor(modelItem => Model.Program)<br />
+                                            @Html.DisplayFor(modelItem => Model.Merit)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">
+                                            <span class="gray" style="font-size:10px;color:#aaa;padding-right:5px">@Html.DisplayNameFor(modelItem => Model.Arabic)</span>
+                                        </td>
+                                        <td valign="top">
+                                            @(Model.Arabic == 1 ? "Yes" : "")
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">
+                                            <span class="gray" style="font-size:10px;color:#aaa">@Html.DisplayNameFor(model => model.Created)</span>
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => Model.Created)
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </a>
+                                                }
+                                                else
+                                                {
+
+                                                    <style type="text/css">
+                                                        #graduate-queue h2, #graduate-dequeue h2, #graduate-list h2 {
+                                                            display: none !important;
+                                                        }
+                                                    </style>
+                                                    <a class="empty" asp-action="Create" asp-controller="Teleprompt"><img style="width:100%" src="/resources/default/empty.jpg" /></a>
+                                                }

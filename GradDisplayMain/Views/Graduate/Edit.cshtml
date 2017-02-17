@@ -1,0 +1,125 @@
+@model CeremonialProfile.Models.Graduate
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit</h2>
+
+<form asp-action="Edit">
+    <div class="form-horizontal">
+        <h4>Graduate</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="GraduateId" />
+        <div class="form-group">
+            <label asp-for="GraduateScannerId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="GraduateScannerId" class="form-control" />
+                <span asp-validation-for="GraduateScannerId" class="text-danger" />
+            </div>
+        </div>
+
+        @if (!ViewBag.isFullname)
+        {
+            <div class="form-group">
+                <label asp-for="FirstName" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleName" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="MiddleName" class="form-control" />
+                    <span asp-validation-for="MiddleName" class="text-danger" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger" />
+                </div>
+            </div>
+        }
+        else {
+            <div class="form-group">
+                <label asp-for="Fullname" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="Fullname" class="form-control" />
+                    <span asp-validation-for="Fullname" class="text-danger" />
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="ArabicFullname" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="ArabicFullname" class="form-control" />
+                    <span asp-validation-for="ArabicFullname" class="text-danger" />
+                </div>
+            </div>
+        }
+
+        <div class="form-group">
+            <label asp-for="Major" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Major" class="form-control" />
+                <span asp-validation-for="Major" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Merit" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Merit" class="form-control" />
+                <span asp-validation-for="Merit" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Program" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Program" class="form-control" />
+                <span asp-validation-for="Program" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="School" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="School" class="form-control" />
+                <span asp-validation-for="School" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Status" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Arabic" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Arabic" class="form-control" />
+                <span asp-validation-for="Arabic" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

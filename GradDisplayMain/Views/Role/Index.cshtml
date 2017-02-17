@@ -1,0 +1,53 @@
+﻿@model IEnumerable<CeremonialProfile.Models.ApplicationRole>
+@{
+    ViewBag.Title = "Index";
+}
+
+<style type="text/css">
+    #tbrole {
+        width: 25%;
+    }
+
+        #tbrole td {
+            padding: 5px;
+        }
+
+    ul {
+        padding-left: 0;
+        list-style-position: inside;
+    }
+
+    #tbrole, .c {
+        border: 1px solid #ccc;
+    }
+</style>
+
+<h2>Available Roles</h2>
+
+<ul>
+    <li>@Html.ActionLink("Create Role", "Create", "Role")</li>
+    <li>@Html.ActionLink("Assign User to Role", "CreateUserRole", "Role")</li>
+</ul>
+
+
+<table id="tbrole" cellpadding="1" cellspacing="1">
+    <tr>
+        <td class="c">
+            Role Name
+        </td>
+        <td class="c">
+            Actions
+        </td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="c">
+                @item.Name
+            </td>
+            <td class="c">
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+</table>

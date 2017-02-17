@@ -1,0 +1,48 @@
+﻿@model CeremonialProfile.ViewModels.Role.RoleViewModel
+@{
+    ViewBag.Title = "Assign User to Role";
+}
+
+<h2>Assign User to Role</h2>
+
+<style type="text/css">
+    #tbrole, .c {
+        border: 1px solid #ccc;
+        padding:5px;
+    }
+</style>
+
+
+@using (Html.BeginForm())
+{
+    <table id="tbrole">
+        <tr>
+            <td class="c"><label asp-for="UserId" class="control-label">Select role</label></td>
+            <td class="c">
+                <!--Select User-->
+                <div class="form-group">
+
+                    <div class="col-md-10">
+                        @Html.DropDownList("UserId")
+                    </div>
+                </div>
+                <!--Ends Here-->
+            </td>
+        </tr>
+        <tr>
+            <td class="c"><label asp-for="RoleId" class="control-label">Select user</label></td>
+            <td class="c">
+                 <!--Select Role -->
+                <div class="form-group">                    
+                    <div class="col-md-10">
+                        @Html.DropDownList("RoleId")
+                    </div>
+                </div>
+
+               
+            </td>
+        </tr>
+
+    </table>
+    <input type="submit" value="Assign User to Role" />
+}

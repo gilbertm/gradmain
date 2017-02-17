@@ -1,0 +1,18 @@
+<div style="color:red">
+    <h2>Clean</h2>
+
+    <h3>Are you sure you want to <strong>clean</strong> the <strong>queue</strong> and <strong>teleprompt</strong>?</h3>
+    <div>
+        <p>Doing so, you can't revert, the following processes will be undertaken</p>
+        <ul>
+            <li>Clean <strong>Teleprompts</strong> table</li>
+            <li>Clean <strong>Queues</strong> table</li>
+         </ul>
+        <form asp-action="CleanConfirmed">
+            <div class="form-actions no-color">
+                <input type="submit" value="Clean" class="btn btn-default" /> |
+                <a asp-action="Index" asp-controller="Graduate">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>

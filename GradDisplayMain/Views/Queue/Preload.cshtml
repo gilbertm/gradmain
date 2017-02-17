@@ -1,0 +1,19 @@
+<div style="color:red">
+    <h2>Preload</h2>
+
+    <h3>Are you sure you want to <strong>preload</strong> the <strong>queue</strong>?</h3>
+    <div>
+        <p>Doing so, you can't revert, the following processes will be undertaken</p>
+        <ul>
+            <li>Clean <strong>Teleprompts</strong> table</li>
+            <li>Clean <strong>Queues</strong> table</li>
+            <li>Load all <strong>Graduates</strong> to the <strong>Queue</strong> ordered by the default order ID, respecting the row incremental instances</li>
+        </ul>
+        <form asp-action="PreloadConfirmed">
+            <div class="form-actions no-color">
+                <input type="submit" value="Preload" class="btn btn-default" /> |
+                <a asp-action="Index" asp-controller="Graduate">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
