@@ -120,6 +120,7 @@ namespace GradDisplayMain.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+
             // clean teleprompt
             foreach (var item in _contextTeleprompt.Teleprompt)
             {
