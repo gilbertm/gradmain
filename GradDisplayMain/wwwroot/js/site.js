@@ -37,31 +37,23 @@
             cache: false
         });
 
-
-        var url;
-
         // queue
-        // url = "/queue/indexlist/";
-        // $.post(url, { })
-        //    .done(function (response) {
-        //         $("#queueResult").html(response);
-        //     });
+        $.post("/queue/indexlist/", { check : false })
+            .done(function (response) {
+                $("#queueResult").html(response);
+            });
 
         // teleprompt
-        // url = "/teleprompt/indexlist/";
-        // $.post(url, { })
-        //     .done(function (response) {
-        //         $("#telepromptResult").html(response);
-        //    });
+        $.post("/teleprompt/indexlist/", { check: false })
+            .done(function (response) {
+                $("#telepromptResult").html(response);
+         });
 
         // graduate
-        url = "/graduate/indexsearch/";
-        // $.post(url, { searchString: $("#searchString").val(), voicePerson: getParameterByName('voiceperson'), voiceExtra: getParameterByName('voiceextra') })
-        $.post(url, { searchString: $("#searchString").val() })
+        $.post("/graduate/indexsearch/", { searchString: $("#searchString").val() })
             .done(function (response) {
                 $("#searchResult").html(response);
             });
-
 
         //ajax call
         $("#searchString").keyup(function (e) {
@@ -69,10 +61,8 @@
             e.preventDefault();
 
             $.delay(function () {
-
-                url = "/graduate/indexsearch/";
                 if ($("#searchString").val().length > 0) {
-                    $.post(url, { searchString: $("#searchString").val() })
+                    $.post("/graduate/indexsearch/", { searchString: $("#searchString").val() })
                         .done(function (response) {
 
                          $("#searchResult").html(response);
@@ -84,16 +74,14 @@
 
 
 
-        $("#setShowGraduates").click(function (e) {
-
-            var url = "/config/SetShowGraduates/";
+        $("#setShowGraduates").on('click', function (e) {
 
             var setShowGrads = 0;
             if ($(this).is(':checked')) {
                 setShowGrads = 1;
             }
 
-            $.post(url, { setShowGraduates: setShowGrads })
+            $.post("/config/SetShowGraduates/", { setShowGraduates: setShowGrads })
              .done(function (response) {
                  // change look
                  window.location = "/";
@@ -102,7 +90,7 @@
 
         });
 
-        var interval = 1000;
+        var interval = 5000;
 
         // clamping
         var $div = $('#clamp');
@@ -113,42 +101,53 @@
 
             /**/
             // queue
-            url = "/queue/indexlist/";
-            $.post(url, {})
+            $.post("/queue/indexlist/", { check : true })
                  .done(function (response) {
                      if (response.length > 0) {
 
-                         var htmlText = $("#queueResult").html().replace(/(\r\n|\n|\r)/gm, "").replace(/( \s*)/g, " ").replace(/(\s*<)/g, "<");
-                         var respText = response.replace(/(\r\n|\n|\r)/gm, "").replace(/( \s*)/g, " ").replace(/(\s*<)/g, "<");
-                         if (htmlText !== respText) {
-                             $("#queueResult").html(respText);
+                         if (response !== $("#uniqueString").html()) {
+
+                             // changed
+                             // repopulate query data
+                             $.post("/queue/indexlist/", { check: false })
+                                 .done(function (resp) {
+                                     if (resp.length > 0) {
+                                         $("#queueResult").html(resp.replace(/(\r\n|\n|\r)/gm, "").replace(/( \s*)/g, " ").replace(/(\s*<)/g, "<"));
+                                     } else {
+                                         $("#queueResult").html(null);
+                                     }
+                                 });
                          }
 
                      } else {
-                         // console.log("queue empty");
                          $("#queueResult").html(null);
                      }
                  });
 
             // teleprompt
-            url = "/teleprompt/indexlist/";
-            $.post(url, {})
-                 .done(function (response) {
-                     if (response.length > 0) {
+            $.post("/teleprompt/indexlist/", { check: true })
+                .done(function (response) {
+                    if (response.length > 0) {
 
-                         var htmlText = $("#telepromptResult").html().replace(/(\r\n|\n|\r)/gm, "").replace(/( \s*)/g, " ").replace(/(\s*<)/g, "<");
-                         var respText = response.replace(/(\r\n|\n|\r)/gm, "").replace(/( \s*)/g, " ").replace(/(\s*<)/g, "<");
-                         if (htmlText !== respText) {
-                             $("#telepromptResult").html(response);
-                         }
+                        if (response !== $("#uniqueString").html()) {
 
-                     } else {
-                         // console.log("teleprompt empty");
-                         $("#telepromptResult").html(null);
-                     }
-                 });
+                            // changed
+                            // repopulate query data
+                            $.post("/teleprompt/indexlist/", { check: false })
+                                .done(function (resp) {
+                                    if (resp.length > 0) {
+                                        $("#telepromptResult").html(resp.replace(/(\r\n|\n|\r)/gm, "").replace(/( \s*)/g, " ").replace(/(\s*<)/g, "<"));
+                                    } else {
+                                        $("#telepromptResult").html(null);
+                                    }
+                                });
+                        }
 
-            /**/
+                    } else {
+                        $("#telepromptResult").html(null);
+                    }
+                });
+
 
             x++;
             if (x > $(window).width()) {
@@ -165,9 +164,4 @@
 
     });
 
-    /* $(window).load(function () {
-        $(".showToScreen").click(function () {
-            $(this).find("img").animate({"width":"100%"});
-        });
-    }); */
 })(jQuery);

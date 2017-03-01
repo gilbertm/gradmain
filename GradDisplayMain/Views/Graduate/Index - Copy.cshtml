@@ -23,7 +23,7 @@
         <div class="col-md-8">
             <ul class="nav navbar-nav navbar-left">
                 @using (Html.BeginForm("Create", "Queue", FormMethod.Get))
-            {
+                {
                     <li>@Html.TextBox("searchString", null, new { @id = "searchString", @autofocus = "autofocus" })</li>
 
                     <li><input type="submit" name="submitToQueue" id="submitToQueue" /></li>
@@ -44,15 +44,9 @@
     </div>
     <div class="row" style="margin-top:5px;">
         <div class="col-md-12">
-            @if (ViewBag.isShowGraduates == true)
-            {
-                @Html.CheckBox("setShowGraduates", true, htmlAttributes: new { @id = "setShowGraduates" });
-            }
-            else
-            {
 
-                @Html.CheckBox("setShowGraduates", false, htmlAttributes: new { @id = "setShowGraduates" });
-            }
+            @Html.CheckBox("setShowGraduates", ViewBag.isShowGraduates == true ? true : false, new { @id = "setShowGraduates" });
+
             <label for="setShowGraduates">Show graduates</label>
             |
             <a asp-action="Preload" asp-controller="Queue">Preload queue</a>

@@ -11,23 +11,16 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GradDisplayMain.Controllers
 {
-    [Authorize]
+    // [Authorize(Policy = "AdministratorRequirement")]
     public class ConfigController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly GradConfigDbContext _gradConfiguration;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ConfigController(
-        UserManager<ApplicationUser> userManager,
-        GradConfigDbContext gradConfiguration)
+        public ConfigController(GradConfigDbContext gradConfiguration, UserManager<ApplicationUser> userManager)
         {
-            _userManager = userManager;
             _gradConfiguration = gradConfiguration;
-        }
-
-        private async Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            return await _userManager.FindByIdAsync(_userManager.GetUserId(HttpContext.User));
+            _userManager = userManager;
         }
 
 
@@ -37,30 +30,31 @@ namespace GradDisplayMain.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = await GetCurrentUserAsync();
-                if (user != null)
+
+                try
                 {
-                    try {
-                        var configShowGraduates = _gradConfiguration.GradConfig.SingleOrDefault(c => c.UserId == user.Id && c.Name == "ShowGraduates");
+                    var user = await _userManager.GetUserAsync(HttpContext.User);
 
-                        if (configShowGraduates != null)
-                        {
-                            configShowGraduates.Value = setShowGraduates.ToString();
-                            _gradConfiguration.Update(configShowGraduates);
-                        }
-                        else
-                        {
-                            _gradConfiguration.Add(new GradConfig { Name = "ShowGraduates", UserId = user.Id, Value = setShowGraduates.ToString() });
-                        }
+                    var configShowGraduates = _gradConfiguration.GradConfig.SingleOrDefault(c => c.UserId == user.Id && c.Name == "ShowGraduates");
 
-
-                        _gradConfiguration.SaveChanges();
-                    } catch (Exception e)
+                    if (configShowGraduates != null)
                     {
-                        Console.Write(e.Message);
-                        // System.Diagnostics.Debug.Write("Error DB Write.");
+                        configShowGraduates.Value = setShowGraduates.ToString();
+                        _gradConfiguration.Update(configShowGraduates);
                     }
+                    else
+                    {
+                        _gradConfiguration.Add(new GradConfig { Name = "ShowGraduates", UserId = user.Id, Value = setShowGraduates.ToString() });
+                    }
+
+
+                    _gradConfiguration.SaveChanges();
                 }
+                catch (Exception e)
+                {
+                    Console.Write(e.Message);
+                }
+
             }
             return RedirectToAction("Index", "Graduate");
         }

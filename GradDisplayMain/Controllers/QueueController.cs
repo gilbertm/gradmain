@@ -55,8 +55,9 @@ namespace GradDisplayMain.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
+        /// Last Modified: 01/03/2017
         [HttpPost]
-        public IActionResult IndexList()
+        public IActionResult IndexList(bool check = false)
         {
             ViewBag.root = _hostEnvironment.ContentRootPath;
             ViewBag.wwwroot = _hostEnvironment.WebRootPath;
@@ -81,41 +82,62 @@ namespace GradDisplayMain.Controllers
                 ViewBag.voiceExtra = Configuration["Custom:Voice:extra"];
             }
 
+            var graduatesIdString = String.Empty;
             var graduates = new List<QueueViewModel>();
 
             // even with preload
             // just get the first five
             // to minimize ajax queries
+            var first = String.Empty;
+            var ictr = 0;
             foreach (var q in _contextQueue.Queue.OrderBy(x => x.Created).Take(5))
             {
-                foreach (var g in _contextGraduate.Graduate)
+                if (q!= null && ictr == 0)
                 {
-                    if (q.GraduateId == g.GraduateId)
+                    first = q.GraduateId.ToString();
+                    ictr++;
+                }
+
+                var grad = _contextGraduate.Graduate.FirstOrDefault(g => g.GraduateId == q.GraduateId);
+
+                if (grad != null)
+                {
+                    graduates.Add(new QueueViewModel()
                     {
-                        graduates.Add(new QueueViewModel()
-                        {
-                            GraduateId = g.GraduateId,
-                            GraduateScannerId = g.GraduateScannerId,
-                            Status = g.Status,
-                            Arabic = g.Arabic,
-                            School = g.School,
-                            Program = g.Program,
-                            Major = g.Major,
-                            Merit = g.Merit,
-                            FirstName = g.FirstName,
-                            ArabicFullname = g.ArabicFullname,
-                            Fullname = g.Fullname,
-                            LastName = g.LastName,
-                            MiddleName = g.MiddleName,
-                            Created = q.Created
-                        });
-                    }
+                        GraduateId = grad.GraduateId,
+                        GraduateScannerId = grad.GraduateScannerId,
+                        Status = grad.Status,
+                        Arabic = grad.Arabic,
+                        School = grad.School,
+                        Program = grad.Program,
+                        Major = grad.Major,
+                        Merit = grad.Merit,
+                        FirstName = grad.FirstName,
+                        ArabicFullname = grad.ArabicFullname,
+                        Fullname = grad.Fullname,
+                        LastName = grad.LastName,
+                        MiddleName = grad.MiddleName,
+                        Created = q.Created
+                    });
                 }
             }
 
             // get the total number in the queues table
             // the the take(5)
             ViewBag.TotalGraduates = _contextQueue.Queue.Count();
+
+            // unique string
+            ViewBag.uniqueStr = first + ViewBag.TotalGraduates;
+
+            if (check == true)
+            {
+                return Content(ViewBag.uniqueStr);
+            }
+
+            if (ViewBag.TotalGraduates <= 0)
+            {
+                return Content("");
+            }
 
             // take must be of same
             // number as the queue limit above

@@ -136,8 +136,10 @@ namespace GradDisplayMain
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+                    //template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Graduate}/{action=Index}/{id?}"
+                );
+        });
         }
     }
 }

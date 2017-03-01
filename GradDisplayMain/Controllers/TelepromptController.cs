@@ -56,8 +56,9 @@ namespace GradDisplayMain.Controllers
         /// <param name="voicePerson"></param>
         /// <param name="voiceExtra"></param>
         /// <returns></returns>
+        /// Last Modified: 01/03/2017
         [HttpPost]
-        public IActionResult IndexList()
+        public IActionResult IndexList(bool check = false)
         {
             ViewBag.root = _hostEnvironment.ContentRootPath;
             ViewBag.wwwroot = _hostEnvironment.WebRootPath;
@@ -108,9 +109,23 @@ namespace GradDisplayMain.Controllers
                                 MiddleName = g.MiddleName,
                                 Created = t.Created
                             }).FirstOrDefault();
+
+                // unique string
+                ViewBag.uniqueStr = Graduate.GraduateId.ToString();
+
+
+                if (check == true)
+                {
+                    return Content(ViewBag.uniqueStr);
+                }
+                else
+                {
+                    return PartialView("_TelepromptListPartial", Graduate);
+                }
             }
 
-            return PartialView("_TelepromptListPartial", Graduate);
+            return Content("");
+
         }
 
         /// <summary>
