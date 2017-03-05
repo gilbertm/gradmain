@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GradDisplayMain.Controllers
 {
-    // [Authorize(Policy = "AdministratorRequirement")]
+    [Authorize(Policy = "AdministratorRequirement")]
     public class ConfigController : Controller
     {
         private readonly GradConfigDbContext _gradConfiguration;
@@ -57,6 +57,29 @@ namespace GradDisplayMain.Controllers
 
             }
             return RedirectToAction("Index", "Graduate");
+        }
+
+        [Route("/Config/SetShowInitialScreen/{initialScreen}")]
+        public void SetShowInitialScreen(string initialScreen = "0")
+        {
+            try
+            {
+                var configInitialScreen = _gradConfiguration.GradConfig.SingleOrDefault(c => c.UserId == "Global" && c.Name == "ShowInitialScreen");
+
+                if (configInitialScreen != null)
+                {
+                    configInitialScreen.Value = initialScreen;
+                    _gradConfiguration.Update(configInitialScreen);
+
+                    _gradConfiguration.SaveChanges();
+                }
+
+               
+            }
+            catch (Exception e)
+            {
+                Console.Write(e.Message);
+            }
         }
 
     }

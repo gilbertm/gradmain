@@ -124,7 +124,7 @@ namespace GradDisplayMain.Controllers
                 }
             }
 
-            return Content("");
+            return PartialView("_TelepromptListPartial", null);
 
         }
 

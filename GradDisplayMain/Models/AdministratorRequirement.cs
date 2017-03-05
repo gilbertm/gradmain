@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace GradDisplayMain.Models
 {
@@ -14,11 +13,11 @@ namespace GradDisplayMain.Models
     {
 
         public static string ConnectionString { get; set; }
-
+        
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AdministratorRequirement requirement)
         {
 
-            /* 
+             
             IList<string> roles = new List<string>();
 
           
@@ -48,18 +47,23 @@ namespace GradDisplayMain.Models
                 var userIsInRole = roles.Any(role => context.User.IsInRole(role));
                 if (!userIsInRole)
                 {
-                    context.Fail();
+                    // context.Fail();
+                    // return null;
+                    var mvcContext = context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext;
 
-                    return null;
-                }
+                    if (mvcContext != null)
+                    {
+                        mvcContext.HttpContext.Response.Redirect("/Account/Login");
+                    }
 
-                context.Succeed(requirement);
-                   
-            } */
+                }  
+            }
 
-            if (context.User.HasClaim(claim => claim.Value == "Administrator"))
+            if (!context.User.HasClaim(claim => claim.Value == "Administrator"))
             {
-                context.Fail();
+                // handled above
+                // redirect to login 
+                // context.Fail();
             } else
             {
                 context.Succeed(requirement);
