@@ -1,4 +1,4 @@
-@model CeremonialProfile.Models.Graduate
+@model GradDisplayMain.Models.Graduate
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,7 +10,7 @@
     <div class="form-horizontal">
         <h4>Graduate</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="All" class="text-danger"></div>
         <input type="hidden" asp-for="GraduateId" />
         <div class="form-group">
             <label asp-for="GraduateScannerId" class="col-md-2 control-label"></label>

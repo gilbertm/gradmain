@@ -233,15 +233,22 @@ namespace GradDisplayMain.Controllers
             // remove all teleprompts
             {
                 var all = from c in _contextTeleprompt.Teleprompt select c;
-                _contextTeleprompt.Teleprompt.RemoveRange(all);
-                _contextTeleprompt.SaveChanges();
+
+                if (all != null)
+                {
+                    _contextTeleprompt.Teleprompt.RemoveRange(all);
+                    _contextTeleprompt.SaveChanges();
+                }
             }
 
             // remove all queues
             {
                 var all = from c in _contextQueue.Queue select c;
-                _contextQueue.Queue.RemoveRange(all);
-                _contextQueue.SaveChanges();
+                if (all != null)
+                {
+                    _contextQueue.Queue.RemoveRange(all);
+                    _contextQueue.SaveChanges();
+                }
             }
 
            

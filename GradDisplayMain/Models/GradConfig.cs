@@ -26,15 +26,11 @@ namespace GradDisplayMain.Models
     {
         public static string ConnectionString { get; set; }
 
-        public GradConfigDbContext(DbContextOptions<GradConfigDbContext> options) : base(options)
-        {
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(ConnectionString);
         }
 
-        public virtual DbSet<GradConfig> GradConfig { get; set; }
+        public DbSet<GradConfig> GradConfig { get; set; }
     }
 }

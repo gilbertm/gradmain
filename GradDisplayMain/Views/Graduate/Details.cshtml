@@ -1,4 +1,4 @@
-@model CeremonialProfile.Models.Graduate
+@model GradDisplayMain.Models.Graduate
 
 @{
     ViewData["Title"] = "Details";
@@ -9,6 +9,7 @@
 <div>
     <h4>Graduate</h4>
     <hr />
+    <div asp-validation-summary="All" class="text-danger"></div>
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.GraduateId)

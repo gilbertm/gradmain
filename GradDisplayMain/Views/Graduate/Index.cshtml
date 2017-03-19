@@ -35,7 +35,7 @@
 
             <h2>List</h2>
             <p>
-                <a asp-action="Create">Create New</a> | <a asp-action="ResetStatus">Reset Status</a>
+                <a asp-action="Create">Create New</a> 
             </p>
 
 
@@ -55,9 +55,13 @@
             }
             <label for="setShowGraduates">Show graduates</label>
             |
-            <a asp-action="Preload" asp-controller="Queue">Preload queue</a>
+            <a asp-action="Preload" asp-controller="Queue">Q Preload</a>
             |
-            <a asp-action="Clean" asp-controller="Queue">Wipe/clean queue and teleprompt tables</a>
+            <a asp-action="Clean" asp-controller="Queue">Q/T Wipe/clean</a>
+            | 
+            <a asp-action="ResetStatus">G Reset Status</a>
+            <br />
+            <strong>Screen:</strong> <a asp-action="ShowInitialScreen" asp-controller="Home">T Set Init</a>
         </div>
     </div>
 

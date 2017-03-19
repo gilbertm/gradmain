@@ -1,0 +1,19 @@
+<div style="color:red">
+    <h2>Clean</h2>
+
+    <h3>Are you sure you want to <strong>reset</strong> the <strong>screen telepromptto initial state</strong> ?</h3>
+    <div>
+        <p>Conditions MUST be met</p>
+        <ul>
+            <li>Empty <strong>Teleprompts</strong> table</li>
+            <li>Empty<strong>Queues</strong> table</li>
+            <li>Configuration table's <strong>Global ShowInitialScreen</strong> is set to 1</li>
+         </ul>
+        <form asp-action="SetAndShowInitialScreenConfirmed">
+            <div class="form-actions no-color">
+                <input type="submit" value="Reset" class="btn btn-default" /> |
+                <a asp-action="Index" asp-controller="Graduate">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
