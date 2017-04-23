@@ -103,6 +103,11 @@ namespace GradDisplayMain.Controllers
                 ViewBag.voiceExtra = Configuration["Custom:Voice:extra"];
             }
 
+            if (!String.IsNullOrEmpty(Configuration["Custom:Voice:type"]))
+            {
+                ViewBag.voiceType = Configuration["Custom:Voice:type"];
+            }
+
             if (!String.IsNullOrEmpty(searchString))
             {
                 // all status 0
@@ -307,10 +312,13 @@ namespace GradDisplayMain.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Graduate graduate = _contextGraduate.Graduate.Single(m => m.GraduateId == id);
-            _contextGraduate.Graduate.Remove(graduate);
+            Graduate graduate = _contextGraduate.Graduate.SingleOrDefault(m => m.GraduateId == id);
 
-            await _contextGraduate.SaveChangesAsync();
+            if (graduate != null)
+            {
+                _contextGraduate.Graduate.Remove(graduate);
+                await _contextGraduate.SaveChangesAsync();
+            }
 
             return RedirectToAction("Index");
         }

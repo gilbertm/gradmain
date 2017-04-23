@@ -47,10 +47,10 @@ textarea {
 }
 
 .isArabic {
-    display:block;
-    clear:both;
-    width:100%;
-    text-align:right;
+    display: block;
+    clear: both;
+    width: 100%;
+    text-align: right;
 }
 
 /* empty */
@@ -58,7 +58,7 @@ textarea {
     outline: 0;
     height: 100%;
     width: 100%;
-    display:block;
+    display: block;
 }
 
     .empty:hover {
@@ -81,6 +81,10 @@ textarea {
         color: #f8f8f8;
         position: absolute;
     }
+
+#uniqueString {
+    display:none;
+}
 
 #graduate-list {
     border-top: 3px solid #f8f8f8;
@@ -109,7 +113,13 @@ textarea {
         text-align: left;
     }
 
-        #graduate-list .nav li:first-child input[type='text'] {
+.searchBox {
+    padding:0;
+    margin:15px 0;
+}
+
+.searchText,
+#graduate-list .nav li:first-child input[type='text'] {
             font-size: 35px;
             width: 100%;
             display: block;
@@ -124,16 +134,17 @@ textarea {
         text-align: left;
     }
 
-        #graduate-list .nav li:last-child input#submitToQueue {
-            background: #000;
-            font-size: 1em;
-            border: 0;
-            padding: 17px 55px;
-            color: #fff;
-            text-transform: uppercase;
-            font-family: Arial;
-            margin-left: 5px;
-        }
+.submitToQueue, 
+#graduate-list .nav li:last-child input#submitToQueue {
+    background: #000;
+    font-size: 1em;
+    border: 0;
+    padding: 17px 55px;
+    color: #fff;
+    text-transform: uppercase;
+    font-family: Arial;
+    margin-left: 5px;
+}
 
 
 @media (min-width:1280px) {
@@ -167,4 +178,3 @@ textarea {
         min-height: 350px;
     }
 }
-

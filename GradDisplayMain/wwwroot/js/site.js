@@ -72,6 +72,32 @@
             }, 500);
         });
 
+        $(".searchText").autocomplete({
+            source: function (request, response) {
+                
+                $.ajax({
+                    url: "/scan/graduates",
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.text,
+                                value: item.value,
+                                id: item.value,
+                            }
+                        }));
+                    }
+                });
+            },
+            select: function (event, ui) {
+                console.log("Selected: " + ui.item.value + " aka " + ui.item.id);
+            }
+        });
+
 
 
         $("#setShowGraduates").on('click', function (e) {

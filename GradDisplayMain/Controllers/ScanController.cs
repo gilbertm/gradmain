@@ -1,25 +1,29 @@
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.PlatformAbstractions;
 using GradDisplayMain.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 using GradDisplayMain.Models.QueueViewModels;
+using System.Collections.Generic;
+using GradDisplayMain.Models.GraduateViewModels;
 
 namespace GradDisplayMain.Controllers
 {
+
     [Authorize(Policy = "AdministratorRequirement")]
-    public class QueueController : Controller
+    public class ScanController : Controller
     {
         private QueueDbContext _contextQueue;
-        private TelepromptDbContext _contextTeleprompt;
         private GraduateDbContext _contextGraduate;
-
+        private TelepromptDbContext _contextTeleprompt;
         private readonly IHostingEnvironment _hostEnvironment;
+        private GradConfigDbContext _gradConfiguration;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         // mimic the way startup is getting
         // custom configuration variables
@@ -29,24 +33,23 @@ namespace GradDisplayMain.Controllers
         /// 
         /// </summary>
         /// <param name="contextQueue"></param>
-        /// <param name="contextGraduate"></param>
-        /// <param name="contextTeleprompt"></param>
+        /// <param name="gradConfiguration"></param>
         /// <param name="appEnvironment"></param>
         /// <param name="hostEnvironment"></param>
-        public QueueController(QueueDbContext contextQueue, GraduateDbContext contextGraduate, TelepromptDbContext contextTeleprompt, IHostingEnvironment hostEnvironment)
+        public ScanController(QueueDbContext contextQueue, GraduateDbContext contextGraduate, TelepromptDbContext contextTeleprompt, GradConfigDbContext gradConfiguration, IHostingEnvironment hostEnvironment, UserManager<ApplicationUser> userManager)
         {
-            _hostEnvironment = hostEnvironment;
-
             _contextQueue = contextQueue;
             _contextGraduate = contextGraduate;
             _contextTeleprompt = contextTeleprompt;
+            _hostEnvironment = hostEnvironment;
+            _gradConfiguration = gradConfiguration;
+            _userManager = userManager;
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(hostEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", optional: true)
                .AddEnvironmentVariables();
-
 
             Configuration = builder.Build();
         }
@@ -55,10 +58,23 @@ namespace GradDisplayMain.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        /// Last Modified: 01/03/2017
-        [HttpPost]
-        public IActionResult IndexList(bool check = false)
+        public IActionResult Index()
         {
+            ViewBag.isFullName = false;
+            ViewBag.isShowGraduates = false;
+
+            var configShowGraduates = _gradConfiguration.GradConfig.SingleOrDefault(c => c.UserId == _userManager.GetUserId(HttpContext.User) && c.Name == "ShowGraduates");
+
+            if (configShowGraduates != null)
+            {
+                ViewBag.isShowGraduates = configShowGraduates.Value == "1" ? true : false;
+            }
+
+            if (!String.IsNullOrEmpty(Configuration["Custom:Fields:fullname"]))
+            {
+                ViewBag.isFullName = Configuration["Custom:Fields:fullname"] == "yes" ? true : false;
+            }
+
             ViewBag.root = _hostEnvironment.ContentRootPath;
             ViewBag.wwwroot = _hostEnvironment.WebRootPath;
             ViewBag.hosting = HttpContext.Request.Host;
@@ -90,9 +106,9 @@ namespace GradDisplayMain.Controllers
             // to minimize ajax queries
             var first = String.Empty;
             var ictr = 0;
-            foreach (var q in _contextQueue.Queue.OrderBy(x => x.Created).Take(5))
+            foreach (var q in _contextQueue.Queue.OrderBy(x => x.Created))
             {
-                if (q!= null && ictr == 0)
+                if (q != null && ictr == 0)
                 {
                     first = q.GraduateId.ToString();
                     ictr++;
@@ -122,28 +138,10 @@ namespace GradDisplayMain.Controllers
                 }
             }
 
-            // get the total number in the queues table
-            // the the take(5)
             ViewBag.TotalGraduates = _contextQueue.Queue.Count();
 
-            // unique string
-            ViewBag.uniqueStr = first + ViewBag.TotalGraduates;
-
-            if (check == true)
-            {
-                return Content(ViewBag.uniqueStr);
-            }
-
-            if (ViewBag.TotalGraduates <= 0)
-            {
-                return Content("");
-            }
-
-            // take must be of same
-            // number as the queue limit above
-            return PartialView("_QueueListPartial", graduates.ToList().Take(5));
+            return View(graduates.OrderByDescending(o => o.Created).ToList());
         }
-
 
         /// <summary>
         /// 
@@ -166,7 +164,7 @@ namespace GradDisplayMain.Controllers
                     if (queue == null)
                     {
                         // add
-                        _contextQueue.Queue.Add(new Queue() { GraduateId = searchString, Created = System.DateTime.Now});
+                        _contextQueue.Queue.Add(new Queue() { GraduateId = searchString, Created = System.DateTime.Now });
                         _contextQueue.SaveChanges();
 
                     }
@@ -174,85 +172,7 @@ namespace GradDisplayMain.Controllers
             }
 
 
-            return RedirectToAction("Index", "Graduate");
-        }
-
-
-        [HttpGet]
-        public IActionResult Preload()
-        {
-            return View();
-        }
-
-        [HttpPost, ActionName("PreloadConfirmed")]
-        [ValidateAntiForgeryToken]
-        public IActionResult PreloadConfirmed()
-        {
-            // remove all teleprompts
-            {
-                var all = from c in _contextTeleprompt.Teleprompt select c;
-                _contextTeleprompt.Teleprompt.RemoveRange(all);
-                _contextTeleprompt.SaveChanges();
-            }
-
-            // remove all queues
-            {
-                var all = from c in _contextQueue.Queue select c;
-                _contextQueue.Queue.RemoveRange(all);
-                _contextQueue.SaveChanges();
-            }
-
-            foreach (var g in _contextGraduate.Graduate.OrderBy(o => o.GraduateId))
-            {
-                Queue queue = _contextQueue.Queue.SingleOrDefault(q => q.GraduateId == g.GraduateId);
-
-                // not in queue
-                if (queue == null)
-                {
-                    // add
-                    _contextQueue.Queue.Add(new Queue() { GraduateId = g.GraduateId, Created = System.DateTime.Now });
-                    _contextQueue.SaveChanges();
-
-                }
-            }
-
-           
-            return RedirectToAction("Index", "Graduate");
-        }
-
-        [HttpGet]
-        public IActionResult Clean()
-        {
-            return View();
-        }
-
-        [HttpPost, ActionName("CleanConfirmed")]
-        [ValidateAntiForgeryToken]
-        public IActionResult CleanConfirmed()
-        {
-            // remove all teleprompts
-            {
-                var all = from c in _contextTeleprompt.Teleprompt select c;
-
-                if (all != null)
-                {
-                    _contextTeleprompt.Teleprompt.RemoveRange(all);
-                    _contextTeleprompt.SaveChanges();
-                }
-            }
-
-            // remove all queues
-            {
-                var all = from c in _contextQueue.Queue select c;
-                if (all != null)
-                {
-                    _contextQueue.Queue.RemoveRange(all);
-                    _contextQueue.SaveChanges();
-                }
-            }
-
-           
-            return RedirectToAction("Index", "Graduate");
+            return RedirectToAction("Index", "Scan");
         }
 
         /// <summary>
@@ -268,7 +188,7 @@ namespace GradDisplayMain.Controllers
                 return NotFound();
             }
 
-            Queue queue =  _contextQueue.Queue.Single(m => m.GraduateId == id);
+            Queue queue = _contextQueue.Queue.Single(m => m.GraduateId == id);
             if (queue == null)
             {
                 return NotFound();
@@ -294,7 +214,33 @@ namespace GradDisplayMain.Controllers
                 _contextQueue.SaveChangesAsync();
             }
 
-            return RedirectToAction("Index", "Graduate");
+            return RedirectToAction("Index", "Scan");
+        }
+
+
+        // GET: scan/graduates
+        [HttpGet]
+        public IActionResult Graduates()
+        {
+            /* get the teleprompts */
+            var graduates = _contextGraduate.Graduate.ToList();
+
+            ICollection<SimpleGraduateViewModel> dict = new List<SimpleGraduateViewModel>();
+
+            if (graduates != null)
+            {
+                foreach (var item in graduates)
+                {
+                    dict.Add(new SimpleGraduateViewModel
+                    {
+                        Text = item.GraduateId + " " + item.Fullname,
+                        Value = item.GraduateId
+                    });
+
+                }
+            }
+
+            return Json(dict);
         }
     }
 }

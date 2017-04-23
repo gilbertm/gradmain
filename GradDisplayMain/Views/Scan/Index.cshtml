@@ -1,0 +1,128 @@
+@model IEnumerable<GradDisplayMain.Models.QueueViewModels.QueueViewModel>
+
+    <div class="info" style="font-size:16px;  color: #d5202a;   padding-left: 17px;   padding: 15px 0;">
+        <span>Total in queue: </span> <strong>@ViewBag.TotalGraduates</strong> | <span>Showing top: </span> <strong>5 ONLY</strong>
+    </div>
+
+    <div class="searchBox col-md-12">
+                    @using (Html.BeginForm("Create", "Scan", FormMethod.Get))
+                    {
+                        <div class="col-md-10">
+                            @Html.TextBox("searchString", null, new { @id = "searchString", @autofocus = "autofocus", @class="searchText" })</div>
+
+                            <div class="col-md-2"><input type="submit" name="submitToQueue" id="submitToQueue"  class="submitToQueue" /></div>
+                    }
+                </div>
+
+    @if (Model.Count() > 0)
+{
+
+
+        <table class="table">
+            @foreach (var item in Model)
+        {
+                <tr>
+                    <td style="white-space:nowrap">
+                        <div class="row">
+                            <div class="col-xs-2" style="position:relative;">
+                                @{ string filePath = ViewBag.wwwroot + "/resources/images/" + item.GraduateId + ".jpg"; }
+
+                                @if (System.IO.File.Exists(filePath))
+                            {
+                                    <img width="100" src="/resources/images/@(@item.GraduateId).jpg" />
+                            }
+                            else
+                            {
+                                    <img width="100" src="/resources/default/default.jpg" />
+                            }
+
+                                <div class="" style="position:absolute;bottom:-20px;">
+
+                                    @{ string filePathPhotoImage = ViewBag.wwwroot + "/resources/images/" + item.GraduateId + ".jpg"; }
+                                    @{ string filePathVoice = ViewBag.wwwroot + "/resources/voices/" + ViewBag.voicePerson + "/" + ViewBag.voiceExtra + "/" + item.GraduateId + ".wav"; }
+
+                                    @if (!System.IO.File.Exists(filePathPhotoImage))
+                                {
+                                        <img height="15" src="/resources/default/no-image.png" style="margin-right:3px;" />
+                                }
+
+                                    @if (!System.IO.File.Exists(filePathVoice))
+                                {
+                                        <img height="15" src="/resources/default/no-sound.png" />
+                                }
+
+                                </div>
+
+                            </div>
+                            <div class="col-xs-10">
+                                <div class="details" style="width:100%;display:block;float:left;font-size:10px;bottom:0;background: rgba(255, 255, 255,0.8);">
+                                    <table style="width:100%;margin-bottom:10px;">
+                                        <tr>
+                                            <td valign="top" width="10%">
+                                                <span class="gray" style="font-size:10px;color:#aaa">@Html.DisplayNameFor(model => model.GraduateId):</span>
+                                            </td>
+                                            <td valign="top">
+                                                @Html.DisplayFor(modelItem => item.GraduateId)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                <span class="gray" style="font-size:10px;color:#aaa">Name</span>
+                                            </td>
+                                            <td valign="top">
+                                                @if (!ViewBag.isFullname)
+                                            {
+                                                    <text>@Html.DisplayFor(modelItem => item.LastName), @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.MiddleName)</text>
+                                            }
+                                            else
+                                            {
+
+                                                    <text>@Html.DisplayFor(modelItem => item.Fullname)</text>
+                                                    <text> | </text>
+                                                    <text>@Html.DisplayFor(modelItem => item.ArabicFullname)</text>
+                                            }
+
+
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                <span class="gray" style="font-size:10px;color:#aaa;padding-right:5px">Academic</span>
+                                            </td>
+                                            <td valign="top">
+                                                @Html.DisplayFor(modelItem => item.School) : @Html.DisplayFor(modelItem => item.Major) : @Html.DisplayFor(modelItem => item.Program)
+                                                <br /> @Html.DisplayFor(modelItem => item.Merit)
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td valign="top">
+                                                <span class="gray" style="font-size:10px;color:#aaa;padding-right:5px">@Html.DisplayNameFor(modelItem => item.Arabic)</span>
+                                            </td>
+                                            <td valign="top">
+                                                @(item.Arabic == 1 ? "Yes" : "")
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                <span class="gray" style="font-size:10px;color:#aaa">@Html.DisplayNameFor(model => model.Created)</span>
+                                            </td>
+                                            <td valign="top">
+                                                @Html.DisplayFor(modelItem => item.Created)
+                                            </td>
+                                        </tr>
+
+                                       
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.GraduateId">Delete</a>
+                    </td>
+                </tr>
+               
+                                        }
+        </table>
+                                    }
