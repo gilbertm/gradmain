@@ -30,7 +30,7 @@
                                         </td>
                                         <td rowspan="4" width="10%">
 
-                                            @{ string fileSoundPath = ViewBag.wwwroot + "/resources/voices/" + ViewBag.voicePerson + "/" + ViewBag.voiceExtra + "/" + Model.GraduateId + ".wav"; }
+                                            @{ string fileSoundPath = ViewBag.wwwroot + "/resources/voices/" + ViewBag.voicePerson + "/" + ViewBag.voiceExtra + "/" + Model.GraduateId + "." + ViewBag.voiceType; }
 
 
                                             @if (!String.IsNullOrEmpty(ViewBag.voicePerson) && !String.IsNullOrEmpty(ViewBag.voiceExtra))

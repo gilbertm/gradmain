@@ -82,6 +82,11 @@ namespace GradDisplayMain.Controllers
                 ViewBag.voiceExtra = Configuration["Custom:Voice:extra"];
             }
 
+            if (!String.IsNullOrEmpty(Configuration["Custom:Voice:type"]))
+            {
+                ViewBag.voiceType = Configuration["Custom:Voice:type"];
+            }
+
             var graduatesIdString = String.Empty;
             var graduates = new List<QueueViewModel>();
 
@@ -162,8 +167,10 @@ namespace GradDisplayMain.Controllers
                 {
                     Queue queue = _contextQueue.Queue.SingleOrDefault(m => m.GraduateId == searchString);
 
+                    var isStatusZero = _contextGraduate.Graduate.SingleOrDefault(g => g.GraduateId == searchString && g.Status == 0);
+
                     // not in queue
-                    if (queue == null)
+                    if (queue == null && isStatusZero != null)
                     {
                         // add
                         _contextQueue.Queue.Add(new Queue() { GraduateId = searchString, Created = System.DateTime.Now});
@@ -291,7 +298,7 @@ namespace GradDisplayMain.Controllers
             if (queue != null)
             {
                 _contextQueue.Queue.Remove(queue);
-                _contextQueue.SaveChangesAsync();
+                _contextQueue.SaveChanges();
             }
 
             return RedirectToAction("Index", "Graduate");

@@ -82,15 +82,25 @@
                         term: request.term
                     },
                     success: function (data) {
-                        response($.map(data, function (item) {
 
-                            return {
-                                label: item.text,
-                                value: item.value,
-                                id: item.value,
-                            }
-                        }));
+                        if (data.length == 0) {
+                            response(null);
+                        }
+                        else {
+                            response($.map(data, function (item) {
+
+                                return {
+                                    label: item.text,
+                                    value: item.value,
+                                    id: item.value,
+                                }
+                            }));
+                        }
+                    },
+                    error: function (x, y, z) {
+                        alert('Error');
                     }
+
                 });
             },
             select: function (event, ui) {
@@ -137,10 +147,12 @@
                              // repopulate query data
                              $.post("/queue/indexlist/", { check: false })
                                  .done(function (resp) {
-                                     if (resp.length > 0) {
-                                         $("#queueResult").html(resp.replace(/(\r\n|\n|\r)/gm, "").replace(/( \s*)/g, " ").replace(/(\s*<)/g, "<"));
-                                     } else {
-                                         $("#queueResult").html(null);
+                                     if ($("#queueResult").length) {
+                                         if (resp.length > 0) {
+                                             $("#queueResult").html(resp.replace(/(\r\n|\n|\r)/gm, "").replace(/( \s*)/g, " ").replace(/(\s*<)/g, "<"));
+                                         } else {
+                                             $("#queueResult").html(null);
+                                         }
                                      }
                                  });
                          }
@@ -161,11 +173,14 @@
                             // repopulate query data
                             $.post("/teleprompt/indexlist/", { check: false })
                                 .done(function (resp) {
-                                    if (resp.length > 0) {
-                                        $("#telepromptResult").html(resp.replace(/(\r\n|\n|\r)/gm, "").replace(/( \s*)/g, " ").replace(/(\s*<)/g, "<"));
-                                    } else {
-                                        $("#telepromptResult").html(null);
+                                    if ($("#telepromptResult").length) {
+                                        if (resp.length > 0) {
+                                            $("#telepromptResult").html(resp.replace(/(\r\n|\n|\r)/gm, "").replace(/( \s*)/g, " ").replace(/(\s*<)/g, "<"));
+                                        } else {
+                                            $("#telepromptResult").html(null);
+                                        }
                                     }
+                                    
                                 });
                         }
 

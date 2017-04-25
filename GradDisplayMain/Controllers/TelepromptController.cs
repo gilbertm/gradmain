@@ -83,6 +83,11 @@ namespace GradDisplayMain.Controllers
                 ViewBag.voiceExtra = Configuration["Custom:Voice:extra"];
             }
 
+            if (!String.IsNullOrEmpty(Configuration["Custom:Voice:type"]))
+            {
+                ViewBag.voiceType = Configuration["Custom:Voice:type"];
+            }
+
             /* teleprompt - single */
             var t = _contextTeleprompt.Teleprompt.FirstOrDefault();
 
@@ -90,6 +95,18 @@ namespace GradDisplayMain.Controllers
 
             if (t != null)
             {
+                var isGraduateStudent = _contextGraduate.Graduate.SingleOrDefault(g => g.GraduateId == t.GraduateId);
+                if (isGraduateStudent == null)
+                {
+                    // something wrong
+                    // the teleprompt info isn't part of the graduatelist
+                    foreach (var item in _contextTeleprompt.Teleprompt)
+                    {
+                        _contextTeleprompt.Teleprompt.Remove(item);
+                    }
+                    _contextTeleprompt.SaveChanges();
+                }
+
                 /* graduate details from t */
                 Graduate = (from g in _contextGraduate.Graduate.Where(x => x.GraduateId == t.GraduateId)
                             select new TelepromptViewModel()

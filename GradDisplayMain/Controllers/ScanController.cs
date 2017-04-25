@@ -98,6 +98,11 @@ namespace GradDisplayMain.Controllers
                 ViewBag.voiceExtra = Configuration["Custom:Voice:extra"];
             }
 
+            if (!String.IsNullOrEmpty(Configuration["Custom:Voice:type"]))
+            {
+                ViewBag.voiceType = Configuration["Custom:Voice:type"];
+            }
+
             var graduatesIdString = String.Empty;
             var graduates = new List<QueueViewModel>();
 
@@ -159,18 +164,22 @@ namespace GradDisplayMain.Controllers
                 if (teleprompt == null)
                 {
                     Queue queue = _contextQueue.Queue.SingleOrDefault(m => m.GraduateId == searchString);
+                                        
+                    var isStatusZero = _contextGraduate.Graduate.SingleOrDefault(g => g.GraduateId == searchString && g.Status == 0);
 
                     // not in queue
-                    if (queue == null)
+                    if (queue == null && isStatusZero != null)
                     {
-                        // add
-                        _contextQueue.Queue.Add(new Queue() { GraduateId = searchString, Created = System.DateTime.Now });
-                        _contextQueue.SaveChanges();
+                        Graduate graduate = _contextGraduate.Graduate.SingleOrDefault(m => m.GraduateId == searchString);
 
+                        if (graduate != null) {
+                            // add
+                            _contextQueue.Queue.Add(new Queue() { GraduateId = graduate.GraduateId, Created = System.DateTime.Now });
+                            _contextQueue.SaveChanges();
+                        }
                     }
                 }
             }
-
 
             return RedirectToAction("Index", "Scan");
         }
@@ -211,7 +220,7 @@ namespace GradDisplayMain.Controllers
             if (queue != null)
             {
                 _contextQueue.Queue.Remove(queue);
-                _contextQueue.SaveChangesAsync();
+                _contextQueue.SaveChanges();
             }
 
             return RedirectToAction("Index", "Scan");
@@ -220,10 +229,10 @@ namespace GradDisplayMain.Controllers
 
         // GET: scan/graduates
         [HttpGet]
-        public IActionResult Graduates()
+        public IActionResult Graduates(string term)
         {
             /* get the teleprompts */
-            var graduates = _contextGraduate.Graduate.ToList();
+            var graduates = _contextGraduate.Graduate.Where(g => g.GraduateId.Contains(term)).Take(5).ToList();
 
             ICollection<SimpleGraduateViewModel> dict = new List<SimpleGraduateViewModel>();
 
